@@ -54,17 +54,21 @@ class Assignment {
     importance_score = 0;
     similar_assignments = 0;
     overall_score = 0;
+    duration = 0;
 
     loadFromJson(json) {
+        dateParsedJson = JSON.parse(json);
+        due_date = Date.parse(dateParsedJson.due_date); //pretty sure this is case sensitive
+
+        json = json.toLowerCase();
         parsedJson = JSON.parse(json);
+
         id = parsedJson.id;
         description = parsedJson.description;
-        due_date = Date.parse(parsedJson.due_date);
         points_possible = parsedJson.points_possible;
         name = parsedJson.name;
         submission_types = parsedJson.submission_types;
         has_submitted_submissions = parsedJson.has_submitted_submissions;
-        duration = 0;
     }
 
     findTimeInDescription() {
