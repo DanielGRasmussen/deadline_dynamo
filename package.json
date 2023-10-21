@@ -6,7 +6,8 @@
     "build": "webpack --watch --progress",
     "build:prod": "webpack --mode=production",
     "test": "jest",
-    "test:ci": "npm run test -- --coverage --ci --testResultsProcessor=\"jest-junit\" --watchAll=false"
+    "test:ci": "npm run test -- --coverage --ci --testResultsProcessor=\"jest-junit\" --watchAll=false",
+    "lint": "eslint src"
   },
   "jest": {
     "transform": {
