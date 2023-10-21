@@ -1,0 +1,192 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin-top: 10px;
+}
+
+.lower {
+    text-transform: lowercase;
+}
+
+.day {
+    font-family: LatoWeb, "Lato Extended", Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin-left: 10px;
+}
+
+.day h3 {
+    font-size: 12pt;
+    font-weight: normal;
+    text-transform: capitalize;
+}
+
+.total-time-day {
+    width: 2.7ch;
+    border: 0px;
+    border-radius: 5px;
+    padding: 2px;
+    font-size: 12pt;
+}
+
+.total-time-day:focus {
+    border: 1px solid #6B7780;
+}
+
+.total-time-day::-webkit-inner-spin-button,
+.total-time-day::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+}
+
+.assignments.purple {
+    border-top: 1px solid purple;
+    border-left: 1px solid purple;
+}
+
+.assignments.red {
+    border-top: 1px solid red;
+    border-left: 1px solid red;
+}
+
+.assignments.blue {
+    border-top: 1px solid blue;
+    border-left: 1px solid blue;
+}
+
+.assignments.orange {
+    border-top: 1px solid orange;
+    border-left: 1px solid orange;
+}
+
+.assignments.pink {
+    border-top: 1px solid pink;
+    border-left: 1px solid pink;
+}
+
+.assignments.lightblue {
+    border-top: 1px solid lightblue;
+    border-left: 1px solid lightblue;
+}
+
+.assignments.gray {
+    border-top: 1px solid gray;
+    border-left: 1px solid gray;
+}
+
+.assignments {
+    margin-left: 50px;
+    display: grid;
+    grid-template-columns: 175px 1fr;
+}
+
+/* Left Area */
+.purple .left-area {
+    border-right: 1px solid purple;
+    background: purple;
+}
+
+.red .left-area {
+    border-right: 1px solid red;
+    background: red;
+}
+
+.blue .left-area {
+    border-right: 1px solid blue;
+    background: blue;
+}
+
+.orange .left-area {
+    border-right: 1px solid orange;
+    background: orange;
+}
+
+.pink .left-area {
+    border-right: 1px solid pink;
+    background: pink;
+}
+
+.lightblue .left-area {
+    border-right: 1px solid lightblue;
+    background: lightblue;
+}
+
+.gray .left-area {
+    border-right: 1px solid gray;
+    background: gray;
+}
+
+.left-area {
+    background: purple;
+    width: 175px;
+}
+
+.course-title {
+    background: white;
+    font-size: 9pt;
+    text-align: center;
+    padding: 10px 0 10px 0;
+    text-transform: uppercase;
+}
+
+.course-title a {
+    color: #0076b6;
+    text-decoration: none;
+}
+
+.course-title a:hover {
+    text-decoration: underline;
+}
+
+/* Individual Assignment */
+.assignment {
+    border-bottom: 1px solid #6B7780;
+    display: grid;
+    grid-template-columns: 1fr 150px;
+    padding: 15px 10px;
+}
+
+.main-area {
+    grid-column: 1/2;
+    grid-row: 1/2;
+    display: flex;
+    align-items: center;
+}
+
+.assignment p {
+    padding: 0;
+    margin: 0;
+}
+
+.assignment .title {
+    font-size: 13pt;
+    margin-left: 10px;
+    height: fit-content;
+}
+
+.assignment .title a {
+    text-decoration: none;
+    color: #0076b6;
+}
+
+.assignment .title a:hover {
+    text-decoration: underline;
+}
+
+.assignment .right-side {
+    color: #6B7780;
+    text-align: right;
+    font-size: 10pt;
+    grid-column: 2/3;
+    grid-row: 1/2;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.due-date {
+    text-transform: capitalize;
+}

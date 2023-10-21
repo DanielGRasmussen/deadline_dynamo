@@ -20,13 +20,12 @@
     "content_scripts": [{
       "matches": ["https://byui.instructure.com/*"],
       "js": [
-        "content_scripts/process_data.js",
-        "content_scripts/replace_assignments.js"
+        "content_scripts/process_data.js"
       ]
     }],
     "web_accessible_resources": [{
       "matches": ["<all_urls>"],
-      "resources": ["backend/catalog.js"]
+      "resources": ["content_scripts/styles.css"]
     }]
   }
   
