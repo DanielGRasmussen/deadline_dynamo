@@ -164,11 +164,30 @@ Developed by [Clyde D'Souza](https://clydedsouza.net/) -->
 
 #Deadline Dynamo
 Make Canvas scheduling smarter.
-Submission for BYU-Idaho Fall 2023 Hackathon.
+Theseus Crew's Submission for BYU-Idaho Fall 2023 Hackathon.
 
-##Credits
+##Overview
+Instructure Canvas has a dashboard which shows assignments to students primarily by due date. This can create bad time management and a false sense of security as some days seem completely open, while others are flooded with assignments.
 
-Daniel Rasmussen -- Team Lead | Frontend Development | API Research and Implmentation | Web Extension Configuration
-Alex Musick -- Backend Development | Algorithm Design | API Research
-Dallan Williams -- Primary API Research and Implementation
-Derek Arima -- API Research and Implementation
+Deadline Dynamo is a web extension that uses the Canvas API to fetch the user's course data and intelligently suggest a more even workload. Each assignment is prioritized by several factors, and a reasonably accurate estimate is given for how long each assignment will take to complete. These estimates are used to balance the student's workload across the week.
+
+##How to Use
+This repo is an unpacked Google Chrome extension. Clone or download the repo, open Google Chrome's extensions page, and turn on Developer Mode. Click the button labeled "Load unpacked," then navigate to the /src folder in the github download and select *the folder* (not a file inside of it). Chrome will load the extension.
+
+Navigate to the Canvas homepage. Switch to List View (three dots in the corner) and reload the page, if applicable. You will see your normal dashboard get replaced with our time-organized one.
+
+##Limitations
+The plugin has ONLY been tested on student accounts. We did not have access to teacher accounts on which we could test the extension. Viewing the dashboard in student preview mode might display proper functionality, but we just don't know for sure. ***If the extension does not perform properly on a teacher account, please seek out a student account in order to properly assess the plugin's functionality.***
+
+Due to time constraints, the extension currently only works on byui.instructure.com and NOT on any other Canvas/Instructure instances.
+
+There is a known issue where, although the assignments are properly prioritized, individual days' worth of work are displayed out of order (e.g. the suggestede assignments for October 23 are shown before those for October 22). We did not have time to troubleshoot this issue before the submission deadline.
+
+##Credits 
+
+**Daniel Rasmussen** -- Team Lead | Frontend Development | API Research and Implmentation | Web Extension Configuration
+**Alex Musick** -- Backend Development | Algorithm Design | API Research
+**Dallan Williams** -- Primary API Research and Implementation
+**Derek Arima** -- API Research and Implementation
+
+Built with Clyde D'Souza's Chrome Extension template: https://clydedsouza.net/
