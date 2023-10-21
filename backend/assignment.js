@@ -55,6 +55,7 @@ class Assignment {
     similar_assignments = 0;
     overall_score = 0;
     duration = 0;
+    course_name = "";
 
     loadFromJson(json) {
         dateParsedJson = JSON.parse(json);
@@ -239,6 +240,20 @@ class Assignment {
         this.calculateImportance();
         this.calculateDuration();
         this.calculateOverallScore();
+    }
+
+    toJSON() {
+        stringBuilder = "{";
+        stringBuilder += "\"title\":" + "\"" + this.name + "\",";
+        stringBuilder += "\"course\":" + "\"" + this.course_name + "\",";
+        stringBuilder += "\"type\":" + "\"" + this.submission_types + "\",";
+        stringBuilder += "\"estTime\":" + "\"" + this.submission_types + "\",";
+        stringBuilder += "\"importance\":" + "\"" + this.importance_score + "\",";
+        stringBuilder += "\"priority\":" + "\"" + this.overall_score + "\",";
+        stringBuilder += "\"due-date\":" + "\"" + this.due_date + "\",";
+        stringBuilder += "\"status\":" + "\"" + this.has_submitted_submissions ? 0 : 1 + "\",";
+        stringBuilder += "}";
+        return stringBuilder;
     }
 
 }

@@ -1,0 +1,15 @@
+Everything goes through catalogue. To add a course, first add just the course:
+
+catalog.createNewCourse(course_json_string)
+
+then populate it:
+
+catalog.populateCourseAssignments(assignments_json_string, course_id)
+
+once all courses are added, rank all their scores:
+
+catalog.CalculateAllScores()
+
+Get the new course data in json format:
+
+json = catalog.toJSON();

@@ -1,4 +1,4 @@
-![](./docs/Thumbnail.png)
+<!-- ![](./docs/Thumbnail.png)
 
 # Chrome Extension Template
 A Chrome Extension created using a template.
@@ -160,4 +160,15 @@ To obtain the `CHROME_APP_ID`, you'll need to upload a version of your Chrome ex
 This repo has boilerplate icons and images which you'd want to replace with something apt to the extension you're building. Duplicate my [Figma Chrome extension template](https://www.figma.com/community/file/1127061326249481158) to get started with your design requirements for your Chrome extension.
 
 ## Credits
-Developed by [Clyde D'Souza](https://clydedsouza.net/)
+Developed by [Clyde D'Souza](https://clydedsouza.net/) -->
+
+#Deadline Dynamo
+Make Canvas scheduling smarter.
+Submission for BYU-Idaho Fall 2023 Hackathon.
+
+##Credits
+
+Daniel Rasmussen -- Team Lead | Frontend Development | API Research and Implmentation | Web Extension Configuration
+Alex Musick -- Backend Development | Algorithm Design | API Research
+Dallan Williams -- Primary API Research and Implementation
+Derek Arima -- API Research and Implementation
