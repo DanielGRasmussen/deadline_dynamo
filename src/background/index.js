@@ -1,22 +1,20 @@
-chrome.runtime.onInstalled.addListener(function (object) {
-    if (object.reason === chrome.runtime.OnInstalledReason.INSTALL) {
-        chrome.tabs.create({ url: "https://clydedsouza.net" });
-    }
-});
+async function getStorage(key) {
+    return await chrome.storage.sync.get(key);
+}
 
-chrome.commands.onCommand.addListener((command) => {
-    if(command === 'turn-on') {
-        chrome.action.setBadgeText({ text: 'ON' });
-        chrome.action.setBadgeBackgroundColor({ color: 'green' });
-    }
-    if(command === 'turn-off') {
-        chrome.action.setBadgeText({ text: 'OFF' });
-        chrome.action.setBadgeBackgroundColor({ color: 'red' });
-    }
-});
+function sort_items() {
+    console.log("Sorting Items")
+}
 
-chrome.omnibox.onInputEntered.addListener((text) => {
-    chrome.tabs.create({ url: 'https://facebook.com/' + encodeURIComponent(text) });
-    chrome.tabs.create({ url: 'https://twitter.com/' + encodeURIComponent(text) });
-    chrome.tabs.create({ url: 'https://instagram.com/' + encodeURIComponent(text) });
-});
+window.onload = async function() {
+    console.log("Content script here");
+    data = await getStorage("testData");
+    console.log(JSON.parse(data.testData));
+
+    const elements = document.getElementsByClassName("PlannerApp");
+    const config = { attributes: true, childList: true, subtree: true};
+    for (element of elements) {
+        const observer = new MutationObserver(sort_items);
+        observer.observe(element, config);
+    }
+}
