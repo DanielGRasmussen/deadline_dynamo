@@ -220,7 +220,9 @@ class Assignment {
 		this.points_possible = parsedJson.points_possible;
 		this.name = parsedJson.name;
 		this.submission_types = parsedJson.submission_types;
-		this.has_submitted_submissions = parsedJson.has_submitted_submissions;
+		if (parsedJson.has_submitted_submissions == true) {
+            this.due_date = null;
+        }
 
         // Make null descriptions impossible
         if (this.description == null) {
@@ -283,7 +285,7 @@ class Assignment {
         }
 
 		//Submission type strategy
-		console.log("keyword strategy for percentage guess failed; using submission type strategy");
+		// console.log("keyword strategy for percentage guess failed; using submission type strategy");
 
 
 		switch(this.submission_types) {
@@ -318,9 +320,9 @@ class Assignment {
 			this.guessed_percent = 1;
 			return 1;
 		default:
-			console.log("WARNING: Submission type strategy for weight guessing failed.");
-			console.log("Returning 1, weight will be ignored");
-			console.log("submission_types = " + this.submission_types);
+			// console.log("WARNING: Submission type strategy for weight guessing failed.");
+			// console.log("Returning 1, weight will be ignored");
+			// console.log("submission_types = " + this.submission_types);
 			this.guessed_percent = 1;
 			return 1;
 		}
@@ -357,7 +359,7 @@ class Assignment {
 			case "days":
 				return foundTime[1] * 3 * 60;
 			default:
-				console.log("WARNING: somehow reached default in calculateDuration in assignment.js");
+				// console.log("WARNING: somehow reached default in calculateDuration in assignment.js");
 			}
 		}
 		//Guess with algorithm
@@ -497,6 +499,7 @@ async function process_data() {
 	const response = await fetch_data();
 	const courseData = response[0];
 	const courseAssignments = response[1];
+    // console.log(courseAssignments);
 	const catalog = new Catalog();
 
 	for (let course of courseData) {
@@ -525,33 +528,44 @@ async function replaceAssignments(assignments, courses) {
 	courses = assignColors(courses);
 
 	const days = allocateAssignments(assignments, [
-		360,
+		300,
+		300,
+		300,
+		300,
+		300,
 		180,
-		420,
 		180,
-		360,
-		420,
-		480,
 		0
 	]);
 	// Allocate assignments modifies worktimes, don't use the same between the two.
 	renderAssignments(days, courses, [
-		360,
+		300,
+		300,
+		300,
+		300,
+		300,
 		180,
-		420,
 		180,
-		360,
-		420,
-		480,
 		0
 	]);
 }
 
 function removeAllAssignments() {
-	const assignments = document.querySelectorAll(".Day-styles__root.planner-day");
+	for (let remover of document.querySelectorAll(".Day-styles__root.planner-day")) {
+		remover.remove();
+	}
 
-	for (let assignment of assignments) {
-		assignment.remove();
+	for (let remover of document.querySelectorAll(".EmptyDays-styles__nothingPlannedContainer")) {
+		remover.remove();
+	}
+
+	for (let remover of document.querySelectorAll("div.planner-empty-days.EmptyDays-styles__root")) {
+		remover.remove()
+	}
+
+	const day_wrappers = document.querySelectorAll(".day-wrapper");
+	if (day_wrappers.length > 1) {
+		day_wrappers[0].remove()
 	}
 }
 
@@ -572,6 +586,13 @@ function findCourseByTitle(courses, title) {
     }
 }
 
+function getWeekOfYear(date) {
+	const now = new Date(date);
+	const currentWeek = Math.ceil((now - new Date(now.getFullYear(), 0, 1)) / 604800000);
+
+	return currentWeek;
+}
+
 function allocateAssignments(assignments, workTimes) {
 	const days = {
 		"monday": [],
@@ -584,31 +605,31 @@ function allocateAssignments(assignments, workTimes) {
 		"overflow": []
 	};
 
-    let currentDay = 0; // 0 = monday
+	const currentWeek = getWeekOfYear(new Date());
+	let currentDay = 0; // 0 = monday
     for (const assignment of assignments) {
 		// Get a link to the estTime
         let remainingWorkTime = assignment.estTime;
         // Save original worktime for x/total.
         assignment.totalWorkTime = remainingWorkTime;
-        // Get week num
-        let due_date = new Date(`${assignment.due_date} `);
-        let startDate = new Date(due_date.getFullYear(), 0, 1);
-        let dayCount = Math.floor((due_date - startDate) /
-            (24 * 60 * 60 * 1000) + 1);
 
-        assignment.weekNum = Math.floor(dayCount / 7);
+		assignment.weekNum = getWeekOfYear(new Date(assignment.due_date.slice(4)));
+		
         while (remainingWorkTime > 0) {
-            if (currentDay >= workTimes.length) {
-                // No more time? It is now overflow.
-                days.overflow.push(assignment);
-                break;
-            }
-            const availableTime = workTimes[currentDay];
+			if (!(assignment.weekNum <= currentWeek + 1)) {
+				break;
+			}
+			if (currentDay >= workTimes.length) {
+				// No more time? It is now overflow.
+				days.overflow.push(assignment);
+				break;
+			}
+			const availableTime = workTimes[currentDay];
 			if (remainingWorkTime <= availableTime) {
 				workTimes[currentDay] -= remainingWorkTime; // Reduce the available work time on the current day.
-                days[Object.keys(days)[currentDay]].push(assignment);
-                break;
-            } else if (Object.keys(days)[currentDay] === "overflow") {
+				days[Object.keys(days)[currentDay]].push(assignment);
+				break;
+			} else if (Object.keys(days)[currentDay] === "overflow") {
 				days[Object.keys(days)[currentDay]].push(assignment);
 				break;
 			} else {
@@ -619,8 +640,8 @@ function allocateAssignments(assignments, workTimes) {
 				days[Object.keys(days)[currentDay]].push(alternateAssignment);
 
 				workTimes[currentDay] = 0;
-                currentDay++;
-            }
+				currentDay++;
+			}
         }
     }
 	return days;
@@ -675,18 +696,65 @@ function formatDate(date) {
     return `${months[parts[1]]} ${parts[2]}${suffix[ending]}`
 }
 
+function formatLongDate(date) {
+	const days = {
+		"Mon": "Monday",
+		"Tue": "Tuesday",
+		"Wed": "Wednesday",
+		"Thu": "Thursday",
+		"Fri": "Friday",
+		"Sat": "Saturday",
+		"Sun": "Sunday"
+	}
+
+    const months = {
+        "Jan": "January",
+        "Feb": "February",
+        "Mar": "March",
+        "Apr": "April",
+        "May": "May",
+        "Jun": "June",
+        "Jul": "July",
+        "Aug": "August",
+        "Sep": "September",
+        "Oct": "October",
+        "Nov": "November",
+        "Dec": "December"
+    }
+
+    const suffix = {
+        "1": "st",
+        "2": "nd",
+        "3": "rd",
+        "4": "th",
+        "5": "th",
+        "6": "th",
+        "7": "th",
+        "8": "th",
+        "9": "th",
+        "0": "th"
+    }
+    
+    parts = date.split(" ");
+	return `${days[parts[0]]}, ${months[parts[1]]} ${parts[2]}${suffix[parts[2].slice(1)]}`
+}
+
 function renderAssignments(days, courses, workTimes) {
-    let day, title, assignments, left_area, course_title, course_link, assignment_area, currentDay, renderedCourses;
+    let day_wrapper, day, title, assignments, left_area, course_title, course_link, assignment_area, currentDay, renderedCourses;
     let assignment_div, main_area, icon, assignment_name, assignment_name_link, right_side, estTime, due_date, currentCourse;
 
 	const styleFile = document.createElement("style");
-	styleFile.innerText = "body,html{width:100%;height:100%;margin:0;padding:0}body{margin-top:10px}.lower{text-transform:lowercase}.day{font-family:LatoWeb, 'Lato Extended', Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif;margin-left:10px}.day h3{font-size:12pt;font-weight:normal;text-transform:capitalize}.total-time-day{width:2.7ch;border:0;border-radius:5px;padding:2px;font-size:12pt}.total-time-day:focus{border:1px solid #6B7780}.total-time-day::-webkit-inner-spin-button,.total-time-day::-webkit-outer-spin-button{-webkit-appearance:none}.assignments.purple{border-top:1px solid purple;border-left:1px solid purple}.assignments.red{border-top:1px solid red;border-left:1px solid red}.assignments.blue{border-top:1px solid blue;border-left:1px solid blue}.assignments.orange{border-top:1px solid orange;border-left:1px solid orange}.assignments.pink{border-top:1px solid pink;border-left:1px solid pink}.assignments.lightblue{border-top:1px solid lightblue;border-left:1px solid lightblue}.assignments.gray{border-top:1px solid gray;border-left:1px solid gray}.assignments{margin-left:50px;display:grid;grid-template-columns:175px 1fr}.purple .left-area{border-right:1px solid purple;background:purple}.red .left-area{border-right:1px solid red;background:red}.blue .left-area{border-right:1px solid blue;background:blue}.orange .left-area{border-right:1px solid orange;background:orange}.pink .left-area{border-right:1px solid pink;background:pink}.lightblue .left-area{border-right:1px solid lightblue;background:lightblue}.gray .left-area{border-right:1px solid gray;background:gray}.left-area{background:purple;width:175px}.course-title{background:white;font-size:9pt;text-align:center;padding:10px 0;text-transform:uppercase}.course-title a{color:#0076b6;text-decoration:none}.course-title a:hover{text-decoration:underline}.assignment{border-bottom:1px solid #6B7780;display:grid;grid-template-columns:1fr 150px;padding:15px 10px}.main-area{grid-column:1/2;grid-row:1/2;display:flex;align-items:center}.assignment p{padding:0;margin:0}.assignment .title{font-size:13pt;margin-left:10px;height:fit-content}.assignment .title a{text-decoration:none;color:#0076b6}.assignment .title a:hover{text-decoration:underline}.assignment .right-side{color:#6B7780;text-align:right;font-size:10pt;grid-column:2/3;grid-row:1/2;display:flex;flex-direction:column;justify-content:center}.due-date{text-transform:capitalize}"
+	styleFile.innerText = "body,html{width:100%;height:100%;margin:0;padding:0}body{margin-top:10px}.lower{text-transform:lowercase}.day{font-family:LatoWeb, 'Lato Extended', Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif;margin-left:10px}.day h3{font-size:12pt;font-weight:normal;text-transform:capitalize}.assignments.purple{border-top:1px solid purple;border-left:1px solid purple}.assignments.red{border-top:1px solid red;border-left:1px solid red}.assignments.blue{border-top:1px solid blue;border-left:1px solid blue}.assignments.orange{border-top:1px solid orange;border-left:1px solid orange}.assignments.pink{border-top:1px solid pink;border-left:1px solid pink}.assignments.lightblue{border-top:1px solid lightblue;border-left:1px solid lightblue}.assignments.gray{border-top:1px solid gray;border-left:1px solid gray}.assignments{margin-left:50px;display:grid;grid-template-columns:175px 1fr}.purple .left-area{border-right:1px solid purple;background:purple}.red .left-area{border-right:1px solid red;background:red}.blue .left-area{border-right:1px solid blue;background:blue}.orange .left-area{border-right:1px solid orange;background:orange}.pink .left-area{border-right:1px solid pink;background:pink}.lightblue .left-area{border-right:1px solid lightblue;background:lightblue}.gray .left-area{border-right:1px solid gray;background:gray}.left-area{background:purple;width:175px}.course-title{background:white;font-size:9pt;text-align:center;padding:10px 0;text-transform:uppercase}.course-title a{color:#0076b6;text-decoration:none}.course-title a:hover{text-decoration:underline}.assignment{border-bottom:1px solid #6B7780;display:grid;grid-template-columns:1fr 150px;padding:15px 10px}.main-area{grid-column:1/2;grid-row:1/2;display:flex;align-items:center}.assignment p{padding:0;margin:0}.assignment .title{font-size:13pt;margin-left:10px;height:fit-content;text-transform:capitalize}.assignment .title a{text-decoration:none;color:#0076b6}.assignment .title a:hover{text-decoration:underline}.assignment .right-side{color:#6B7780;text-align:right;font-size:10pt;grid-column:2/3;grid-row:1/2;display:flex;flex-direction:column;justify-content:center}.due-date{text-transform:capitalize}"
 	document.querySelector("head").appendChild(styleFile);
 
     let i = 0;
-    for (let curDay of Object.keys(days)) {
+    for (let curDay of Object.keys(days).reverse()) {
         currentDay = days[curDay];
         renderedCourses = [];
+		console.log(currentDay);
+
+		day_wrapper = document.createElement("div");
+		day_wrapper.setAttribute("class", "day-wrapper");
 
 		for (let assignment of currentDay) {
 			currentCourse = findCourseByTitle(courses, assignment.course);
@@ -696,10 +764,7 @@ function renderAssignments(days, courses, workTimes) {
 				day.setAttribute("class", "day");
 
 				title = document.createElement("h3");
-				const tempDate = new Date(parseInt(assignment.due_date.substring(0, 4)), 0);
-				const newDate = new Date(tempDate.setDate((assignment.weekNum + 4) * 7 + i - 3));
-				const dateString = `${newDate.getFullYear()}-${newDate.getMonth()}-${newDate.getDate()}`;
-				title.innerHTML = `${curDay}, ${formatDate(dateString)} <input value="${Math.round(workTimes[i] / 60 * 10) / 10}" type="number" class="total-time-day"><span class="lower">h</span>`
+				title.innerHTML = `${formatLongDate(assignment.due_date)}`
 
 				assignments = document.createElement("div");
 				assignments.setAttribute("class", `assignments ${currentCourse.color}`);
@@ -711,8 +776,9 @@ function renderAssignments(days, courses, workTimes) {
 				course_title.setAttribute("class", "course-title");
 
 				course_link = document.createElement("a");
-				course_link.setAttribute("href", "#");
-				course_link.textContent = currentCourse.name;
+				// console.log(assignment);
+				course_link.setAttribute("href", `https://byui.instructure.com/courses/${assignment.course_id}`);
+				course_link.textContent = currentCourse.title;
 
 				assignment_area = document.createElement("div");
 				assignment_area.setAttribute("class", "assignment-area");
@@ -725,8 +791,10 @@ function renderAssignments(days, courses, workTimes) {
 
 				assignments.appendChild(assignment_area);
 				day.appendChild(assignments);
+
+				day_wrapper.appendChild(day);
 				
-				document.querySelector("#dashboard-planner div").appendChild(day);
+				document.querySelector("#dashboard-planner div").appendChild(day_wrapper);
 				renderedCourses.push(assignment.course);
 			}
 			
@@ -738,7 +806,7 @@ function renderAssignments(days, courses, workTimes) {
 
 			icon = document.createElement("div");
 			icon.setAttribute("class", "icon");
-			if (assignment.type === "Quiz") {
+			if (assignment.type === "online_quiz") {
 				icon.innerHTML = "<svg class='icon' name='IconQuiz' viewBox='0 0 1920 1920' rotate='0' width='1em' height='1em' aria-hidden='true' role='presentation' focusable='false' class='dUOHu_bGBk dUOHu_drOs dUOHu_eXrk cGqzL_bGBk cGqzL_owrh' style='width: 1em; height: 1em;'><g role='presentation'><g fill-rule='evenodd' stroke='none' stroke-width='1'><path d='M746.255375,1466.76417 L826.739372,1547.47616 L577.99138,1796.11015 L497.507383,1715.51216 L746.255375,1466.76417 Z M580.35118,1300.92837 L660.949178,1381.52637 L329.323189,1713.15236 L248.725192,1632.55436 L580.35118,1300.92837 Z M414.503986,1135.20658 L495.101983,1215.80457 L80.5979973,1630.30856 L0,1549.71056 L414.503986,1135.20658 Z M1119.32036,264.600006 C1475.79835,-91.8779816 1844.58834,86.3040124 1848.35034,88.1280123 L1848.35034,88.1280123 L1865.45034,96.564012 L1873.88634,113.664011 C1875.71034,117.312011 2053.89233,486.101999 1697.30034,842.693987 L1697.30034,842.693987 L1550.69635,989.297982 L1548.07435,1655.17196 L1325.43235,1877.81395 L993.806366,1546.30196 L415.712386,968.207982 L84.0863971,636.467994 L306.72839,413.826001 L972.602367,411.318001 Z M1436.24035,1103.75398 L1074.40436,1465.70397 L1325.43235,1716.61796 L1434.30235,1607.74796 L1436.24035,1103.75398 Z M1779.26634,182.406009 C1710.18234,156.41401 1457.90035,87.1020124 1199.91836,345.198004 L1199.91836,345.198004 L576.90838,968.207982 L993.806366,1385.10597 L1616.70235,762.095989 C1873.65834,505.139998 1804.68834,250.920007 1779.26634,182.406009 Z M858.146371,525.773997 L354.152388,527.597997 L245.282392,636.467994 L496.310383,887.609985 L858.146371,525.773997 Z'></path><path d='M1534.98715,372.558003 C1483.91515,371.190003 1403.31715,385.326002 1321.69316,466.949999 L1281.22316,507.305998 L1454.61715,680.585992 L1494.97315,640.343994 C1577.16715,558.035996 1591.87315,479.033999 1589.82115,427.164001 L1587.65515,374.610003 L1534.98715,372.558003 Z'></path></g></g></svg>";
 			} else {
 				icon.innerHTML = "<svg class='icon' name='IconAssignment' viewBox='0 0 1920 1920' rotate='0' width='1em' height='1em' aria-hidden='true' role='presentation' focusable='false' class='dUOHu_bGBk dUOHu_drOs dUOHu_eXrk cGqzL_bGBk cGqzL_owrh' style='width: 1em; height: 1em;'><g role='presentation'><path d='M1468.2137,0 L1468.2137,564.697578 L1355.27419,564.697578 L1355.27419,112.939516 L112.939516,112.939516 L112.939516,1807.03225 L1355.27419,1807.03225 L1355.27419,1581.15322 L1468.2137,1581.15322 L1468.2137,1919.97177 L2.5243549e-29,1919.97177 L2.5243549e-29,0 L1468.2137,0 Z M1597.64239,581.310981 C1619.77853,559.174836 1655.46742,559.174836 1677.60356,581.310981 L1677.60356,581.310981 L1903.4826,807.190012 C1925.5058,829.213217 1925.5058,864.902104 1903.4826,887.038249 L1903.4826,887.038249 L1225.8455,1564.67534 C1215.22919,1575.17872 1200.88587,1581.16451 1185.86491,1581.16451 L1185.86491,1581.16451 L959.985883,1581.16451 C928.814576,1581.16451 903.516125,1555.86606 903.516125,1524.69475 L903.516125,1524.69475 L903.516125,1298.81572 C903.516125,1283.79477 909.501919,1269.45145 920.005294,1258.94807 L920.005294,1258.94807 Z M1442.35055,896.29929 L1016.45564,1322.1942 L1016.45564,1468.225 L1162.48643,1468.225 L1588.38135,1042.33008 L1442.35055,896.29929 Z M677.637094,1242.34597 L677.637094,1355.28548 L338.818547,1355.28548 L338.818547,1242.34597 L677.637094,1242.34597 Z M903.516125,1016.46693 L903.516125,1129.40645 L338.818547,1129.40645 L338.818547,1016.46693 L903.516125,1016.46693 Z M1637.62298,701.026867 L1522.19879,816.451052 L1668.22958,962.481846 L1783.65377,847.057661 L1637.62298,701.026867 Z M1129.39516,338.829841 L1129.39516,790.587903 L338.818547,790.587903 L338.818547,338.829841 L1129.39516,338.829841 Z M1016.45564,451.769356 L451.758062,451.769356 L451.758062,677.648388 L1016.45564,677.648388 L1016.45564,451.769356 Z' fill-rule='evenodd' stroke='none' stroke-width='1'></path></g></svg>";
@@ -748,7 +816,7 @@ function renderAssignments(days, courses, workTimes) {
 			assignment_name.setAttribute("class", "title");
 
 			assignment_name_link = document.createElement("a");
-			assignment_name_link.setAttribute("href", "#");
+			assignment_name_link.setAttribute("href", `https://byui.instructure.com/courses/${assignment.course_id}/assignments/${assignment.id}`);
 			assignment_name_link.textContent = assignment.title;
 
 			right_side = document.createElement("div");
@@ -762,6 +830,7 @@ function renderAssignments(days, courses, workTimes) {
 			due_date.setAttribute("class", "due-date");
 
 			// Swap from date opject to YYYY-MM-DD
+            // console.log(assignment.due_date);
 			if (assignment.due_date.length > 11) {
 				const dateObject = new Date(assignment.due_date)
 				const string_due_date = `${dateObject.getFullYear()}-${dateObject.getMonth()}-${dateObject.getDate()}`;
@@ -789,18 +858,23 @@ function renderAssignments(days, courses, workTimes) {
     }
 }
 
+function run_everything() {
+	removeAllAssignments();
+	process_data().then(response => {
+		const assignments = response[0];
+		const courses = response[1];
+		// console.log(courses);
+		replaceAssignments(assignments, courses);
+	})
+}
+
 window.onload = async function() {
 	const elements = document.getElementsByClassName("PlannerApp");
 	const config = { attributes: true, childList: true, subtree: true};
 	for (let element of elements) {
-		const observer = new MutationObserver(replaceAssignments);
+		const observer = new MutationObserver(run_everything);
 		observer.observe(element, config);
 	}
+	run_everything()
+
 };
-
-process_data().then(response => {
-	const assignments = response[0];
-	const courses = response[1];
-	replaceAssignments(assignments, courses);
-})
-
