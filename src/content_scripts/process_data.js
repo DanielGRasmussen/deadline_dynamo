@@ -616,7 +616,7 @@ function allocateAssignments(assignments, workTimes) {
 		assignment.weekNum = getWeekOfYear(new Date(assignment.due_date.slice(4)));
 		
         while (remainingWorkTime > 0) {
-			if (!(assignment.weekNum <= currentWeek + 1)) {
+			if (!(assignment.weekNum <= currentWeek)) {
 				break;
 			}
 			if (currentDay >= workTimes.length) {
