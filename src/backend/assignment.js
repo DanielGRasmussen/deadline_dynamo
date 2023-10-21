@@ -53,7 +53,7 @@ class Assignment {
     guessed_percent = 0;
     importance_score = 0;
     similar_assignments = 0;
-    number_of_questions = 0;
+    overall_score = 0;
 
     loadFromJson(json) {
         parsedJson = JSON.parse(json);
@@ -109,15 +109,15 @@ class Assignment {
     guessPercentage() {
         // Keyword strategy
         if (this.description.indexOf("final") != -1 || this.description.indexOf("exam") != -1) {
-            guessed_percent = 60;
+            this.guessed_percent = 60;
             return;
         }
         if (this.description.indexOf("quiz") != -1) {
-            guessed_percent = 30;
+            this.guessed_percent = 30;
             return;
         }
         if (this.description.indexOf("homework") != -1) {
-            guessed_percent = 20;
+            this.guessed_percent = 20;
             return;
         }
 
@@ -126,40 +126,40 @@ class Assignment {
 
         switch(this.submission_types) {
             case "online quiz":
-                guessed_percent = 30;
+                this.guessed_percent = 30;
                 return;
             case "none":
-                guessed_percent = 0;
+                this.guessed_percent = 0;
                 return;
             case "on_paper":
-                guessed_percent = 30;
+                this.guessed_percent = 30;
                 return;
             case "discussion_topic":
-                guessed_percent = 15;
+                this.guessed_percent = 15;
                 return;
             case "external_tool":
-                guessed_percent = 20;
+                this.guessed_percent = 20;
                 return;
             case "online_upload":
-                guessed_percent = 35;
+                this.guessed_percent = 35;
                 return;
             case "online_text_entry":
-                guessed_percent = 10;
+                this.guessed_percent = 10;
                 return;
             case "online_url":
-                guessed_percent = 25;
+                this.guessed_percent = 25;
                 return;
             case "media_recording":
-                guessed_percent = 30;
+                this.guessed_percent = 30;
                 return;
             case "student_annotation":
-                guessed_percent = 10;
+                this.guessed_percent = 10;
                 return;
             default:
                 console.log("WARNING: Submission type strategy for weight guessing failed.");
                 console.log("Returning -1, weight will be ignored");
                 console.log("submission_types = " + this.submission_types);
-                guessed_percent = -1;
+                this.guessed_percent = -1;
                 return;
         }
     }
@@ -167,7 +167,7 @@ class Assignment {
     calculateImportance() {
         points = this.points_possible;
         percentage = this.guessPercentage() * 0.01;
-        importance_score = points * percentage;
+        this.importance_score = points * percentage;
     }
 
     calculateDuration() {
@@ -182,7 +182,7 @@ class Assignment {
                 case "days":
                     return foundTime[1] * 3 * 60
                 default:
-                    console.log("!!!WARNING!!!: somehow reached default in calculateDuration in assignment.js");
+                    console.log("WARNING: somehow reached default in calculateDuration in assignment.js");
             }
         }
         //Guess with algorithm
@@ -190,9 +190,51 @@ class Assignment {
             duration = 1;
             return;
         }
-        if (this.)
-        
+        // Define type modifier
+        typeModifier = 1;
+        switch(this.submission_types) {
+            case "online_quiz":
+                typeModifier = 0.9;
+            case "online_text_entry":
+                typeModifier = 1.1;
+            case "online_upload" || "on_paper":
+                typeModifier = 2;
+            default:
+                typeModifier = 1;
+        }
 
+        // Set keyword modifiers
+        keywordModifier = 1;
+        if (this.name.includes("self-assessment") || this.name.includes("self assessment")) {
+            keywordModifier++;
+        }
+        if (this.name.includes("final") || this.name.includes("notes")) {
+            keywordModifier = keywordModifier + 2;
+        }
+        if (this.name.includes("paper") || this.name.includes("project") || this.name.includes("essay") || this.name.includes("draft")) {
+            keywordModifier = keywordModifier + 3;
+        }
+
+        unadjustedDuration = Math.floor( ( (30 * this.similar_assignments + 60 * keywordModifier * typeModifier) + 0.5 * this.points_possible) / 2 );
+
+        userPercentOffset = chrome.storage.sync.get("durationOffset");
+
+        adjustedDuration = unadjustedDuration + unadjustedDuration * userPercentOffset;
+
+        this.duration = adjustedDuration;
+        return;
+    }
+
+    calculateOverallScore() {
+        today = new Date().toISOString().slice(0, 10);
+        daysUntilDue = ( this.due_date.getTime() - today.getTime() ) / (1000 * 3600 * 24);
+        this.overall_score = ( this.duration + this.importance_score ) / daysUntilDue;
+    }
+
+    computeAllScores() {
+        this.calculateImportance();
+        this.calculateDuration();
+        this.calculateOverallScore();
     }
 
 }
