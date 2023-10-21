@@ -14,15 +14,19 @@
       "alarms"
     ],
     "options_ui": {
-      "page": "options.html",
+      "page": "options/options.html",
       "open_in_tab": true
     },
     "background": {
-      "service_worker": "background/index.js"
+      "service_worker": "background/index.html"
     },
     "content_scripts": [{
-      "matches": ["*://byui.instructure.com"],
-      "js": ["content_scripts.js/index.js"]
+      "matches": ["https://byui.instructure.com/*"],
+      "js": [
+        "content_scripts/fetch_data.js", 
+        "content_scripts/process_data.js",
+        "content_scripts/replace_assignments.js"
+      ]
     }]
   }
   
