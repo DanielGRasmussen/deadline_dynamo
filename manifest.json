@@ -7,7 +7,12 @@
     "content_scripts": [{
       "matches": ["https://byui.instructure.com/"],
       "js": [
-        "content_scripts/process_data.js"
+		"content_scripts/catalog.js",
+		"content_scripts/course.js",
+		"content_scripts/assignment.js",
+		"content_scripts/fetch_data.js",
+		"content_scripts/renderer.js",
+        "content_scripts/run_all.js"
       ]
     }]
   }
