@@ -8,7 +8,7 @@ Instructure Canvas has a dashboard which shows assignments to students primarily
 Deadline Dynamo is a web extension that uses the Canvas API to fetch the user's course data and intelligently suggest a more even workload. Each assignment is prioritized by several factors, and a reasonably accurate estimate is given for how long each assignment will take to complete. These estimates are used to balance the student's workload across the week.
 
 ## How to Use
-This repo is an unpacked Google Chrome extension. Clone or download the repo, open Google Chrome's extensions page, and turn on Developer Mode. Click the button labeled "Load unpacked," then navigate to the /src folder in the github download and select *the folder* (not a file inside of it). Chrome will load the extension.
+This repo is an unpacked Google Chrome extension. Clone or download the repo, open Google Chrome's extensions page, and turn on Developer Mode. Click the button labeled "Load unpacked," then navigate to the github download and select *the folder* (not a file inside of it). Chrome will load the extension.
 
 Navigate to the Canvas homepage. Switch to List View (three dots in the corner) and reload the page, if applicable. You will see your normal dashboard get replaced with our time-organized one.
 
