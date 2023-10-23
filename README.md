@@ -30,9 +30,9 @@ There is a known issue where, although the assignments are properly prioritized,
 
 ## Credits 
 
-**Daniel Rasmussen** -- Team Lead | Frontend Development | API Research and Implmentation | Web Extension Configuration
-**Alex Musick** -- Backend Development | Algorithm Design | API Research
-**Dallan Williams** -- Primary API Research and Implementation
-**Derek Arima** -- API Research and Implementation
+* **Daniel Rasmussen** -- Team Lead | Frontend Development | API Research and Implmentation | Web Extension Configuration
+* **Alex Musick** -- Backend Development | Algorithm Design | API Research
+* **Dallan Williams** -- Primary API Research and Implementation
+* **Derek Arima** -- API Research and Implementation
 
-Built with Clyde D'Souza's Chrome Extension template: https://clydedsouza.net/
+Built with Clyde D'Souza's Chrome Extension template: [https://clydedsouza.net/](https://clydedsouza.net/)https://clydedsouza.net/
