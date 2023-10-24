@@ -1,14 +1,5 @@
 class Catalog {
 	courses = [];
-    
-	saveToStorage() {
-		chrome.storage.sync.set("courses", this.courses);
-	}
-
-	loadfromstorage() {
-		return chrome.storage.sync.get("courses");
-	}
-
 	createNewCourse(json) {
 		const newCourse = new Course();
 		newCourse.loadFromJson(json);
@@ -27,7 +18,7 @@ class Catalog {
 
 	getCourse(id) {
 		for (let i=0; i < this.courses.length; i++) {
-			if (this.courses[i].id == id) {
+			if (this.courses[i].id === id) {
 				return this.courses[i];
 			}
 		}
@@ -43,27 +34,15 @@ class Catalog {
 	}
 
 	toJSON() {
-		let stringBuilder = "[";
-		for (let i=0; i < this.courses.length; i++) {
-			if (i == this.courses.length) {
-				stringBuilder += this.courses[i].allAssignmentsToJSON(false);
-			} else {
-				stringBuilder += this.courses[i].allAssignmentsToJSON(false); //bool is backwards from how you'd expect. true=no comma, false=comma
-			}
-		}
-		stringBuilder = stringBuilder.slice(0, -1);
-		stringBuilder += "]";
-		const assignments = JSON.parse(stringBuilder);
+		const assignments = [];
+		const courses = {};
+		let courseCode, courseTitle;
+		for (let course of this.courses) {
+			assignments.push(...course.allAssignmentsToJSON());
 
-		stringBuilder = "{";
-		for (let i=0; i < this.courses.length; i++) {
-			stringBuilder += this.courses[i].toJSON();
-			if (i !== this.courses.length - 1) {
-				stringBuilder += ",";
-			}
+			[courseCode, courseTitle] = course.toJSON();
+			courses[courseCode] = { title: courseTitle };
 		}
-		stringBuilder += "}";
-		const courses = JSON.parse(stringBuilder);
 		return [assignments, courses];
 	}
 

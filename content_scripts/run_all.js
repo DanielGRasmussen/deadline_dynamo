@@ -3,7 +3,7 @@ function run_everything() {
 	process_data().then(response => {
 		const assignments = response[0];
 		const courses = response[1];
-		// console.log(courses);
+
 		replaceAssignments(assignments, courses);
 	})
 }

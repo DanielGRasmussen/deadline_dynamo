@@ -1,11 +1,3 @@
-// ----------------------------------------------------------------------------------------
-// ----------------------------------------------------------------------------------------
-// ----------------------------------------------------------------------------------------
-// --------------------------------------Assignment----------------------------------------
-// ----------------------------------------------------------------------------------------
-// ----------------------------------------------------------------------------------------
-// ----------------------------------------------------------------------------------------
-
 class Assignment {
 	id = 0;
     course_id = 0;
@@ -23,16 +15,10 @@ class Assignment {
 	course_name = "";
 
 	loadFromJson(json) {
-        try {
-		    this.due_date = new Date(json.due_at);
-        } catch {
-            try {
-                this.due_date = new Date(json.due_date);
-            } catch {
-                this.due_date = null;
-            }
-        };
+		this.due_date = new Date(json.due_at);
 
+		// Some items are case sensitive.
+		// This is after the fact and I have no idea what so I'm leaving this forceful case insensivity.
         let stringifiedJson = JSON.stringify(json);
 		stringifiedJson = stringifiedJson.toLowerCase();
 		const parsedJson = JSON.parse(stringifiedJson);
@@ -42,110 +28,91 @@ class Assignment {
 		this.points_possible = parsedJson.points_possible;
 		this.name = parsedJson.name;
 		this.submission_types = parsedJson.submission_types;
-		if (parsedJson.has_submitted_submissions == true) {
+		if (parsedJson.has_submitted_submissions === true) {
             this.due_date = null;
         }
 
         // Make null descriptions impossible
-        if (this.description == null) {
+        if (this.description === null) {
             this.description = "a";
         }
 	}
 
 	findTimeInDescription() {
-		//Find indexes of time keywords
+		// Find indexes of time keywords
 		let minutes_index = this.description.indexOf("minute");
-		if (minutes_index == -1) {
+		if (minutes_index === -1) {
 			minutes_index = this.description.indexOf("minutes");
 		}
 		let hours_index = this.description.indexOf("hour");
-		if (hours_index == -1) {
+		if (hours_index === -1) {
 			hours_index = this.description.indexOf("hours");
 		}
 		let days_index = this.description.indexOf("day");
-		if (days_index == -1) {
+		if (days_index === -1) {
 			days_index = this.description.indexOf("days");
 		}
 
-		//Find numbers surrounding the words
-		if (minutes_index == -1) {
+		// Find numbers surrounding the words
+		if (minutes_index === -1) {
 			if (!isNaN(this.description[minutes_index - 1])) {
 				return ["minutes", this.description[minutes_index]];
 			}
 		}
         
-		else if (hours_index == -1) {
+		else if (hours_index === -1) {
 			if (!isNaN(this.description[hours_index - 1])) {
 				return ["hours", this.description[hours_index]];
 			}
 		}
         
-		else if (days_index == -1) {
+		else if (days_index === -1) {
 			if (!isNaN(this.description[days_index - 1])) {
 				return ["minutes", this.description[days_index]];
 			}
 		}
-
-		else {
-			return ["null", 0];
-		}
+		return ["null", 0];
 	}
 
 	guessPercentage() {
 		// Keyword strategy
-        if (this.name.indexOf("final") != -1 || this.name.indexOf("exam") != -1) {
+        if (this.name.indexOf("final") !== -1 || this.name.indexOf("exam") !== -1) {
             this.guessed_percent = 3;
             return 3;
         }
-        if (this.name.indexOf("quiz") != -1) {
+        if (this.name.indexOf("quiz") !== -1) {
             this.guessed_percent = 3;
             return 3;
         }
-        if (this.name.indexOf("homework") != -1) {
+        if (this.name.indexOf("homework") !== -1) {
             this.guessed_percent = 1;
             return 1;
         }
 
-		//Submission type strategy
+		// Submission type strategy
 		// console.log("keyword strategy for percentage guess failed; using submission type strategy");
 
+		const weights = {
+			online_quiz: [2, 2],
+			none: [0, 0],
+			on_paper: [2, 3],
+			discussion_topic: [1, 1.5],
+			external_tool: [2, 2],
+			online_upload: [2, 3],
+			online_text_entry: [1, 1],
+			online_url: [2, 3],
+			media_recording: [2, 3],
+			student_annotation: [1, 1]
+		}
 
-		switch(this.submission_types) {
-		case "online_quiz":
-			this.guessed_percent = 2;
-			return 2;
-		case "none":
-			this.guessed_percent = 0;
-			return 0;
-		case "on_paper":
-			this.guessed_percent = 2;
-			return 3;
-		case "discussion_topic":
-			this.guessed_percent = 1;
-			return 1.5;
-		case "external_tool":
-			this.guessed_percent = 2;
-			return 2;
-		case "online_upload":
-			this.guessed_percent = 2;
-			return 3;
-		case "online_text_entry":
-			this.guessed_percent = 1;
-			return 1;
-		case "online_url":
-			this.guessed_percent = 2;
-			return 3;
-		case "media_recording":
-			this.guessed_percent = 2;
-			return 3;
-		case "student_annotation":
-			this.guessed_percent = 1;
-			return 1;
-		default:
+		if (this.submission_types in Object.keys(weights)) {
+			this.guessPercentage = weights[this.submission_types];
+			return weights[this.submission_types];
+		} else {
 			// console.log("WARNING: Submission type strategy for weight guessing failed.");
 			// console.log("Returning 1, weight will be ignored");
 			// console.log("submission_types = " + this.submission_types);
-			this.guessed_percent = 1;
+			this.guessPercentage = 1;
 			return 1;
 		}
 	}
@@ -170,7 +137,7 @@ class Assignment {
       }
 
 	calculateDuration() {
-		//Try direct search
+		// Try direct search
 		const foundTime = this.findTimeInDescription();
 		if (!foundTime == ["null", 0]) {
 			switch(foundTime[0]) {
@@ -223,7 +190,6 @@ class Assignment {
 		const adjustedDuration = unadjustedDuration;
 
 		this.duration = adjustedDuration;
-		return;
 	}
 
 	calculateOverallScore() {
@@ -239,20 +205,19 @@ class Assignment {
 	}
 
 	toJSON() {
-		let stringBuilder = "{";
-		stringBuilder += `"id": ${this.id},`;
-		stringBuilder += `"course_id": ${this.course_id},`;
-		stringBuilder += `"title": "${this.name}",`;
-		stringBuilder += `"course": "${this.course_name}",`;
-		stringBuilder += `"type": "${this.submission_types}",`;
-		stringBuilder += `"points": ${this.points_possible},`;
-		stringBuilder += `"estTime": ${this.duration},`;
-		stringBuilder += `"importance": ${this.importance_score},`;
-		stringBuilder += `"priority": ${this.overall_score},`;
-		stringBuilder += `"due_date": "${this.due_date.toDateString()}",`;
-		stringBuilder += `"status": ${this.has_submitted_submissions ? 0 : 1}`;
-		stringBuilder += `}`;
-		return stringBuilder;
+		return {
+			id: this.id,
+			course_id: this.course_id,
+			title: this.name,
+			course: this.course_name,
+			type: this.submission_types,
+			points: this.points_possible,
+			estTime: this.duration,
+			importance: this.importance_score,
+			priority: this.overall_score,
+			due_date: this.due_date.toString(),
+			status: this.has_submitted_submissions ? 0 : 1
+		}
 	}
 
 }

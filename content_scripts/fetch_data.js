@@ -19,7 +19,7 @@ async function fetchAllAssignments(courseId) {
 		const response = await fetch(url);
 		const data = await response.json();
 
-		if (data.length == 0) {
+		if (data.length === 0) {
 			// No more data to fetch, break the loop
 			break;
 		}
@@ -46,14 +46,12 @@ async function fetch_data() {
 	}
 
 	return [courseData, courseAssignments];
-    
 }
 
 async function process_data() {
 	const response = await fetch_data();
 	const courseData = response[0];
 	const courseAssignments = response[1];
-    // console.log(courseAssignments);
 	const catalog = new Catalog();
 
 	for (let course of courseData) {
