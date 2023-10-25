@@ -1,11 +1,6 @@
-function run_everything() {
-	removeAllAssignments();
-	process_data().then(response => {
-		const assignments = response[0];
-		const courses = response[1];
-
-		replaceAssignments(assignments, courses);
-	});
+async function run_everything() {
+	const data = new Fetch();
+	await data.processData();
 }
 
 window.onload = async function () {

@@ -1,19 +1,59 @@
 {
-    "manifest_version": 3,
-    "name": "Deadline Dynamo",
-    "description": "A chrome extension that helps the user to organize and plan their Canvas assignments.",
-    "version": "0.1",
-    "author": "Theseus' Crew",
-    "content_scripts": [{
-      "matches": ["https://byui.instructure.com/"],
-      "js": [
-		"content_scripts/catalog.js",
-		"content_scripts/course.js",
-		"content_scripts/assignment.js",
-		"content_scripts/fetch_data.js",
-		"content_scripts/renderer.js",
-        "content_scripts/run_all.js"
-      ]
-    }]
-  }
-  
+	"manifest_version": 3,
+	"name": "Deadline Dynamo",
+	"description": "A chrome extension that helps the user to organize and plan their Canvas assignments.",
+	"version": "0.1",
+	"author": "Theseus' Crew",
+	"content_scripts": [{
+		"matches": ["https://byui.instructure.com/"],
+		"js": [
+			"content_scripts/algorithm/catalog.js",
+			"content_scripts/algorithm/course.js",
+			"content_scripts/algorithm/assignment.js",
+			"content_scripts/fetch.js",
+			"content_scripts/renderer.js",
+			"content_scripts/run_all.js"
+		]
+		},
+		{
+			"matches": ["https://byui.instructure.com/deadline_dynamo"],
+			"html": [
+				"content_scripts/settings/settings.html"
+			],
+			"css": [
+				"content_scripts/settings/settings.css"
+			],
+			"js": [
+				"content_scripts/settings/settings.js"
+			],
+			"run_at": "document_start"
+		},
+		{
+			"matches": ["https://byui.instructure.com/*"],
+			"js": [
+				"content_scripts/settings/account_dynamo_settings.js"
+			],
+			"run_at": "document_end"
+		},
+		{
+			"matches": [
+				"https://byui.instructure.com/profile/communication",
+				"https://byui.instructure.com/profile",
+				"https://byui.instructure.com/profile/settings",
+				"https://byui.instructure.com/dashboard/eportfolios",
+				"https://byui.instructure.com/profile/qr_mobile_login",
+				"https://byui.instructure.com/account_notifications"
+			],
+			"js": [
+				"content_scripts/settings/left_dynamo_settings.js"
+			],
+			"run_at": "document_start"
+		}
+	],
+	"web_accessible_resources": [
+		{
+			"resources": ["content_scripts/settings/settings.html"],
+			"matches": ["<all_urls>"]
+		}
+	]
+}
