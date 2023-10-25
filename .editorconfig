@@ -1,0 +1,13 @@
+# I just threw the rules into ChatGPT, no clue if any of these are right.
+[*]
+max_line_length = 100
+indent_style = tab
+indent_size = 4
+end_with_semicolon = true
+quote_type = double
+insert_space_around_brackets = true
+remove_trailing_commas = true
+arrow_function_parentheses = always
+end_of_line = lf
+format_on_save = true
+auto_save = onFocusChange

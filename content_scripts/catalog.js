@@ -7,17 +7,17 @@ class Catalog {
 	}
 
 	populateCourseAssignments(json, course_id) {
-        this.getCourse(course_id).addAssignment(json);
+		this.getCourse(course_id).addAssignment(json);
 	}
 
 	calculateAllScores() {
-		for (let i=0; i < this.courses.length; i++) {
+		for (let i = 0; i < this.courses.length; i++) {
 			this.courses[i].computeAllAssignmentScores();
 		}
 	}
 
 	getCourse(id) {
-		for (let i=0; i < this.courses.length; i++) {
+		for (let i = 0; i < this.courses.length; i++) {
 			if (this.courses[i].id === id) {
 				return this.courses[i];
 			}
@@ -27,7 +27,7 @@ class Catalog {
 
 	getAllAssignments() {
 		let assignments = [];
-		for (let i=0; i < this.courses.length; i++) {
+		for (let i = 0; i < this.courses.length; i++) {
 			assignments = assignments.concat(this.courses[i].assignments);
 		}
 		return assignments;
@@ -45,5 +45,4 @@ class Catalog {
 		}
 		return [assignments, courses];
 	}
-
 }

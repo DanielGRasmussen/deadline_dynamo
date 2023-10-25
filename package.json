@@ -1,0 +1,25 @@
+{
+  "name": "deadline_dynamo",
+  "version": "0.1.0",
+  "description": "A chrome extension that helps the user to organize and plan their Canvas assignments.",
+  "main": "index.js",
+  "scripts": {
+		"lint": "npx eslint . --fix"
+	},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanielGRasmussen/deadline_dynamo.git"
+  },
+  "author": "Theseus' Crew",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DanielGRasmussen/deadline_dynamo/issues"
+  },
+  "homepage": "https://github.com/DanielGRasmussen/deadline_dynamo#readme",
+  "devDependencies": {
+    "eslint": "^8.52.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "prettier": "^3.0.3"
+  }
+}

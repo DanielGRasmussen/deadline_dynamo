@@ -1,6 +1,6 @@
 class Assignment {
 	id = 0;
-    course_id = 0;
+	course_id = 0;
 	description = "";
 	due_date;
 	points_possible = 0;
@@ -19,7 +19,7 @@ class Assignment {
 
 		// Some items are case sensitive.
 		// This is after the fact and I have no idea what so I'm leaving this forceful case insensivity.
-        let stringifiedJson = JSON.stringify(json);
+		let stringifiedJson = JSON.stringify(json);
 		stringifiedJson = stringifiedJson.toLowerCase();
 		const parsedJson = JSON.parse(stringifiedJson);
 
@@ -29,13 +29,13 @@ class Assignment {
 		this.name = parsedJson.name;
 		this.submission_types = parsedJson.submission_types;
 		if (parsedJson.has_submitted_submissions === true) {
-            this.due_date = null;
-        }
+			this.due_date = null;
+		}
 
-        // Make null descriptions impossible
-        if (this.description === null) {
-            this.description = "a";
-        }
+		// Make null descriptions impossible
+		if (this.description === null) {
+			this.description = "a";
+		}
 	}
 
 	findTimeInDescription() {
@@ -58,15 +58,11 @@ class Assignment {
 			if (!isNaN(this.description[minutes_index - 1])) {
 				return ["minutes", this.description[minutes_index]];
 			}
-		}
-        
-		else if (hours_index === -1) {
+		} else if (hours_index === -1) {
 			if (!isNaN(this.description[hours_index - 1])) {
 				return ["hours", this.description[hours_index]];
 			}
-		}
-        
-		else if (days_index === -1) {
+		} else if (days_index === -1) {
 			if (!isNaN(this.description[days_index - 1])) {
 				return ["minutes", this.description[days_index]];
 			}
@@ -76,18 +72,18 @@ class Assignment {
 
 	guessPercentage() {
 		// Keyword strategy
-        if (this.name.indexOf("final") !== -1 || this.name.indexOf("exam") !== -1) {
-            this.guessed_percent = 3;
-            return 3;
-        }
-        if (this.name.indexOf("quiz") !== -1) {
-            this.guessed_percent = 3;
-            return 3;
-        }
-        if (this.name.indexOf("homework") !== -1) {
-            this.guessed_percent = 1;
-            return 1;
-        }
+		if (this.name.indexOf("final") !== -1 || this.name.indexOf("exam") !== -1) {
+			this.guessed_percent = 3;
+			return 3;
+		}
+		if (this.name.indexOf("quiz") !== -1) {
+			this.guessed_percent = 3;
+			return 3;
+		}
+		if (this.name.indexOf("homework") !== -1) {
+			this.guessed_percent = 1;
+			return 1;
+		}
 
 		// Submission type strategy
 		// console.log("keyword strategy for percentage guess failed; using submission type strategy");
@@ -103,7 +99,7 @@ class Assignment {
 			online_url: [2, 3],
 			media_recording: [2, 3],
 			student_annotation: [1, 1]
-		}
+		};
 
 		if (this.submission_types in Object.keys(weights)) {
 			this.guessPercentage = weights[this.submission_types];
@@ -120,34 +116,35 @@ class Assignment {
 	calculateImportance() {
 		const points = this.points_possible;
 		const percentage = this.guessPercentage();
-        // console.log(this.points_possible);
-        // console.log(this.guessed_percent);
+		// console.log(this.points_possible);
+		// console.log(this.guessed_percent);
 		this.importance_score = points * percentage;
 	}
 
-    async getFromStorageSync(key) { //Chrome storage is officialy synchronous, but returns promises, which is infuriating and stupid and has been just one of MANY MANY MANY cases of libraries just being poorly designed during this project. here's what chatGPT spat out so I don't have to deal with it.
-        let value;
-        await new Promise((resolve) => {
-          chrome.storage.sync.get(key, (result) => {
-            value = result[key];
-            resolve();
-          });
-        });
-        return value;
-      }
+	async getFromStorageSync(key) {
+		//Chrome storage is officialy synchronous, but returns promises, which is infuriating and stupid and has been just one of MANY MANY MANY cases of libraries just being poorly designed during this project. here's what chatGPT spat out so I don't have to deal with it.
+		let value;
+		await new Promise(resolve => {
+			chrome.storage.sync.get(key, result => {
+				value = result[key];
+				resolve();
+			});
+		});
+		return value;
+	}
 
 	calculateDuration() {
 		// Try direct search
 		const foundTime = this.findTimeInDescription();
 		if (!foundTime == ["null", 0]) {
-			switch(foundTime[0]) {
-			case "minutes":
-				return foundTime[1];
-			case "hours":
-				return foundTime[1] * 60;
-			case "days":
-				return foundTime[1] * 3 * 60;
-			default:
+			switch (foundTime[0]) {
+				case "minutes":
+					return foundTime[1];
+				case "hours":
+					return foundTime[1] * 60;
+				case "days":
+					return foundTime[1] * 3 * 60;
+				default:
 				// console.log("WARNING: somehow reached default in calculateDuration in assignment.js");
 			}
 		}
@@ -158,19 +155,19 @@ class Assignment {
 		}
 		// Define type modifier
 		let typeModifier = 1;
-		switch(this.submission_types) {
-            case "online_quiz":
-                typeModifier = 1;
-                break;
-            case "online_text_entry":
-                typeModifier = 1;
-                break;
-            case "online_upload" || "on_paper":
-                typeModifier = 2;
-                break;
-            default:
-                typeModifier = 1;
-                break;
+		switch (this.submission_types) {
+			case "online_quiz":
+				typeModifier = 1;
+				break;
+			case "online_text_entry":
+				typeModifier = 1;
+				break;
+			case "online_upload" || "on_paper":
+				typeModifier = 2;
+				break;
+			default:
+				typeModifier = 1;
+				break;
 		}
 
 		// Set keyword modifiers
@@ -181,11 +178,21 @@ class Assignment {
 		if (this.name.includes("final") || this.name.includes("notes")) {
 			keywordModifier = keywordModifier + 2;
 		}
-		if (this.name.includes("paper") || this.name.includes("project") || this.name.includes("essay") || this.name.includes("draft")) {
+		if (
+			this.name.includes("paper") ||
+			this.name.includes("project") ||
+			this.name.includes("essay") ||
+			this.name.includes("draft")
+		) {
 			keywordModifier = keywordModifier + 3;
 		}
 
-		const unadjustedDuration = Math.floor( ( (30 * this.similar_assignments + 60 * keywordModifier * typeModifier) + 0.2 * this.points_possible) / 2.2 );
+		const unadjustedDuration = Math.floor(
+			(30 * this.similar_assignments +
+				60 * keywordModifier * typeModifier +
+				0.2 * this.points_possible) /
+				2.2
+		);
 
 		const adjustedDuration = unadjustedDuration;
 
@@ -194,8 +201,8 @@ class Assignment {
 
 	calculateOverallScore() {
 		const today = new Date();
-		const daysUntilDue = ( today.getTime() - this.due_date.getTime() ) / (1000 * 3600 * 24);
-		this.overall_score = ( this.duration + this.importance_score ) / daysUntilDue;
+		const daysUntilDue = (today.getTime() - this.due_date.getTime()) / (1000 * 3600 * 24);
+		this.overall_score = (this.duration + this.importance_score) / daysUntilDue;
 	}
 
 	computeAllScores() {
@@ -217,7 +224,6 @@ class Assignment {
 			priority: this.overall_score,
 			due_date: this.due_date.toString(),
 			status: this.has_submitted_submissions ? 0 : 1
-		}
+		};
 	}
-
 }
