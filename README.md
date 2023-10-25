@@ -12,6 +12,8 @@ This repo is an unpacked Google Chrome extension. Clone or download the repo, op
 
 Navigate to the Canvas homepage. Switch to List View (three dots in the corner) and reload the page, if applicable. You will see your normal dashboard get replaced with our time-organized one.
 
+https://github.com/DanielGRasmussen/deadline_dynamo/assets/104102130/389cc7c6-41bb-49bb-a416-45d3fc4ac6e6
+
 ## Limitations
 The plugin has ONLY been tested on student accounts. We did not have access to teacher accounts on which we could test the extension. Viewing the dashboard in student preview mode might display proper functionality, but we just don't know for sure. ***If the extension does not perform properly on a teacher account, please seek out a student account in order to properly assess the plugin's functionality.***
 
