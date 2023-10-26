@@ -17,16 +17,17 @@
 		},
 		{
 			"matches": ["https://byui.instructure.com/deadline_dynamo"],
+			"js": [
+				"content_scripts/fetch.js",
+				"content_scripts/settings/settings.js"
+			],
 			"html": [
 				"content_scripts/settings/settings.html"
 			],
 			"css": [
 				"content_scripts/settings/settings.css"
 			],
-			"js": [
-				"content_scripts/settings/settings.js"
-			],
-			"run_at": "document_start"
+			"run_at": "document_idle"
 		},
 		{
 			"matches": ["https://byui.instructure.com/*"],
@@ -47,7 +48,7 @@
 			"js": [
 				"content_scripts/settings/left_dynamo_settings.js"
 			],
-			"run_at": "document_start"
+			"run_at": "document_end"
 		}
 	],
 	"web_accessible_resources": [

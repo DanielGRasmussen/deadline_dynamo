@@ -38,5 +38,72 @@
 			</nav>
 		</div>
 	</div>
-
+	<div id="not_right_side" class="ic-app-main-content with-right-side">
+		<div id="content-wrapper" class="ic-Layout-contentWrapper">
+			<div id="content" class="ic-Layout-contentMain" role="main">
+				<h1 style="padding-top: 0.3em">Deadline Dynamo Settings</h1>
+				<form class="dynamo-settings">
+					<ul>
+						<!-- https://docs.google.com/document/d/1c4JamHN8E8acj2UhTvIBsJOkSIrtuQO6hOkSEz1xNog/edit?usp=sharing -->
+						<li>
+							<label for="prioritize">Prioritize:</label>
+							<select id="prioritize" class="default_email edit_data">
+								<option>Classes with low grades</option>
+								<option>Classes with high grades</option>
+							</select>
+						</li>
+						<h3>Class Weights</h3>
+						<div class="class-weights">
+							<li>
+								<label for="class1">WDD 331R:</label>
+								<input id="class1" type="number" value="1" />
+							</li>
+						</div>
+						<p class="data_description">The number is multiplied onto all base assignment predictions.</p>
+					</ul>
+					<div class="form-actions">
+						<button type="button" class="btn cancel_button">Cancel</button>
+						<button type="submit" class="btn btn-primary">Update Settings</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div id="right-side-wrapper" class="ic-app-main-content__secondary">
+			<aside id="right-side" role="complementary">
+				<h2>Work Times</h2>
+				<div>
+					<ul class="work-times">
+						<li>
+							<label for="monday">monday:</label>
+							<input id="monday" type="text" pattern="[0-2][0-9]:[0-5][0-9]" placeholder="HH:MM" />
+						</li>
+						<li>
+							<label for="tuesday">tuesday:</label>
+							<input id="tuesday" type="text" pattern="[0-2][0-9]:[0-5][0-9]" placeholder="HH:MM" />
+						</li>
+						<li>
+							<label for="wednesday">wednesday:</label>
+							<input id="wednesday" type="text" pattern="[0-2][0-9]:[0-5][0-9]" placeholder="HH:MM" />
+						</li>
+						<li>
+							<label for="thursday">thursday:</label>
+							<input id="thursday" type="text" pattern="[0-2][0-9]:[0-5][0-9]" placeholder="HH:MM" />
+						</li>
+						<li>
+							<label for="friday">friday:</label>
+							<input id="friday" type="text" pattern="[0-2][0-9]:[0-5][0-9]" placeholder="HH:MM" />
+						</li>
+						<li>
+							<label for="saturday">saturday:</label>
+							<input id="saturday" type="text" pattern="[0-2][0-9]:[0-5][0-9]" placeholder="HH:MM" />
+						</li>
+						<li>
+							<label for="sunday">sunday:</label>
+							<input id="sunday" type="text" pattern="[0-2][0-9]:[0-5][0-9]" placeholder="HH:MM" />
+						</li>
+					</ul>
+				</div>
+			</aside>
+		</div>
+	</div>
 </div>
