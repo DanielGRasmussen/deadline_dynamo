@@ -4,7 +4,15 @@ accountDynamoSettings.setAttribute("style", "padding: 0px; max-width: 100%;");
 accountDynamoSettings.innerHTML =
 	'<div class="fOyUs_bGBk profile-tab-profile_settings" style="margin: 0.75rem 0;"><a href="/deadline_dynamo" class="fOyUs_bGBk fbyHH_bGBk fbyHH_bSMN">Deadline Dynamo</a></div>';
 
+// Based if when the function is next called the menu is opening.
+let menuOpening = true;
+
 async function addDynamo() {
+	if (!menuOpening) {
+		menuOpening = true;
+		return;
+	}
+	menuOpening = false;
 	// It seems there's a slight animation waiting period. It probably takes about 0.175 seconds to load the menu.
 	// Also, the html doesn't exist until the menu is clicked.
 	setTimeout(() => {
